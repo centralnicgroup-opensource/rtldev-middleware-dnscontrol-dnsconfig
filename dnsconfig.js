@@ -1,9 +1,8 @@
 /*
-   dnsconfig.js: dnscontrol configuration file for ORGANIZATION NAME.
+   dnsconfig.js: dnscontrol configuration file for HEXONET OT&E Demonstration.
 */
 
 // Providers:
-
 var REG_HX = NewRegistrar('hexonet', 'HEXONET');
 var DNS_HX = NewDnsProvider('hexonet', 'HEXONET');
 
