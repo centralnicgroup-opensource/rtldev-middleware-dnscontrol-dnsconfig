@@ -1,0 +1,7 @@
+{
+  "hexonet": {
+	  "apilogin": "test.user",
+	  "apipassword": "test.passw0rd",
+	  "apientity": "1234"
+  }
+}
