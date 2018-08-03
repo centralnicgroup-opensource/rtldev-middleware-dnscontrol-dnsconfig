@@ -16,6 +16,8 @@ dnscontrol push
 
 ## Example configuration
 
+Use ipaddress setting in case of active ip address filter settings.
+
 ```json
 {
   "hexonet": {
