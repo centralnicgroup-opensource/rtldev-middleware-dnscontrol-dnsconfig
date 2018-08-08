@@ -6,9 +6,10 @@
 var REG_HX = NewRegistrar('hexonet', 'HEXONET');
 var DNS_HX = NewDnsProvider('hexonet', 'HEXONET');
 
+DEFAULTS(DefaultTTL(3600));
+
 // Domains:
 D('abhoster.com', REG_HX, DnsProvider(DNS_HX),
-    DefaultTTL(3600),
     NAMESERVER('ns1.ispapi.net'),
     NAMESERVER('ns2.ispapi.net'),
     NAMESERVER('ns3.ispapi.net'),
