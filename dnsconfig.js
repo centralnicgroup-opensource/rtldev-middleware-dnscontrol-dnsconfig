@@ -6,8 +6,7 @@
 var REG_HX = NewRegistrar('hexonet', 'HEXONET');
 var DNS_HX = NewDnsProvider('hexonet', 'HEXONET');
 
-// Set Default TTL for all RR - does not apply to NAMESERVER
-// https://github.com/StackExchange/dnscontrol/issues/99
+// Set Default TTL for all RR to reflect our Backend API Default
 DEFAULTS(
     {"ns_ttl":"3600"},
     DefaultTTL(3600)
