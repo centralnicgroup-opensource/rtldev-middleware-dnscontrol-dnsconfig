@@ -23,7 +23,7 @@ Use ipaddress setting in case of active ip address filter settings.
   "hexonet": {
       "apilogin": "test.user",
       "apipassword": "test.passw0rd",
-      "apientity": "1234",
+      "apientity": "OTE",
       // "debugmode": "0", // "1" to activate
       // "ipaddress": "172.3.25.16" // set your outgoing ip
   }
