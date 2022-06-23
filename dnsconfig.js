@@ -13,11 +13,13 @@ DEFAULTS(
 );
 
 // Domains:
-D('abhoster.com', REG_HX, DnsProvider(DNS_HX),
+D('papakai123.com', REG_HX, DnsProvider(DNS_HX),
     NAMESERVER('ns1.ispapi.net.'),
     NAMESERVER('ns2.ispapi.net.'),
     NAMESERVER('ns3.ispapi.net.'),
     NAMESERVER('ns4.ispapi.net.'),
-    A('elk1', '10.190.234.178'),
-    A('test', '56.123.54.12')
+    A('ns1', '10.190.234.175'),
+    A('ns2', '10.190.234.176'),
+    A('ns3', '10.190.234.177'),
+    A('ns4', '10.190.234.178')
 );
