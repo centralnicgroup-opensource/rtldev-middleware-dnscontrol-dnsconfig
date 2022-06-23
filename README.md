@@ -5,7 +5,7 @@ DNS configuration for test / demo purposes of our provider module
 Preview changes that would be submitted:
 
 ```bash
-dnscontrol preview
+docker run --rm -it -v $(pwd)/dnsconfig.js:/dns/dnsconfig.js -v $(pwd)/creds.json:/dns/creds.json stackexchange/dnscontrol dnscontrol preview
 ```
 
 Push the changes to your providers:
