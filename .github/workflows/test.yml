@@ -19,9 +19,10 @@ jobs:
     name: Test x86 - ubuntu-latest
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.actor != 'dependabot[bot]')
     runs-on: ubuntu-latest
+    container: stackexchange/dnscontrol
     
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run Preview Test via Docker
-        run: docker run --rm -it -v $(pwd)/dnsconfig.js:/dns/dnsconfig.js -v $(pwd)/creds.json:/dns/creds.json stackexchange/dnscontrol dnscontrol preview
+        run: dnscontrol preview
