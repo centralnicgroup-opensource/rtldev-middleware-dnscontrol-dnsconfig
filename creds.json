@@ -4,6 +4,7 @@
 	"apilogin": "test.user",
 	"apipassword": "test.passw0rd",
 	"apientity": "OTE",
-	"debugmode": "1"
+	"debugmode": "1",
+	"ipaddress": "172.31.3.16"
   }
 }
