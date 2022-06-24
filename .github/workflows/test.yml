@@ -19,7 +19,7 @@ jobs:
     name: Test x86 - ubuntu-latest
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.actor != 'dependabot[bot]')
     runs-on: ubuntu-latest
-    container: stackexchange/dnscontrol
+    container: stackexchange/dnscontrol:latest
     
     steps:
       - name: Checkout
