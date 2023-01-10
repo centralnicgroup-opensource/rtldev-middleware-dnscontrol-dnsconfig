@@ -1,0 +1,8 @@
+{
+	"hexonet": {
+		"apilogin": "test.user",
+		"apipassword": "test.passw0rd",
+		"apientity": "OTE",
+		"TYPE": "HEXONET"
+	}
+}

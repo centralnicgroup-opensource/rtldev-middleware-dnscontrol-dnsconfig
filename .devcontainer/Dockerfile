@@ -23,7 +23,7 @@ ENV REFRESHED_AT 2022-01-10
 
 # # Install dependencies
 RUN apk update && \ 
-    apk add postfix wget sudo git pwgen zip unzip curl go
+    apk add --update postfix wget sudo git pwgen zip unzip curl go nodejs npm
 
 # Add image configuration and scripts
 ADD ${SCRIPTS_DIR_PATH}/post-create.sh /post-create.sh

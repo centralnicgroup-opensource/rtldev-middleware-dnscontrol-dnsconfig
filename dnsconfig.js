@@ -3,12 +3,12 @@
 */
 
 // Providers:
-var REG_HX = NewRegistrar('hexonet', 'HEXONET');
-var DNS_HX = NewDnsProvider('hexonet', 'HEXONET');
+var REG_HX = NewRegistrar('hexonet');
+var DNS_HX = NewDnsProvider('hexonet');
 
 // Set Default TTL for all RR to reflect our Backend API Default
 DEFAULTS(
-    {"ns_ttl":"3600"},
+    { "ns_ttl": "3600" },
     DefaultTTL(3600)
 );
 
