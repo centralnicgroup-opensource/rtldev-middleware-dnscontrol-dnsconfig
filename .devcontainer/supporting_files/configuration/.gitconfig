@@ -1,0 +1,11 @@
+[color]
+        ui = auto # auto color
+[credentials]
+        helper = store # save credentials in store
+[submodule]
+        recurse = true # always update git submodules recursively
+[fetch]
+        prune = true # automatic cleanup
+        prunetags = true # automatic cleanup of tags
+[pull]
+        rebase = true # rely on rebasing when pulling
