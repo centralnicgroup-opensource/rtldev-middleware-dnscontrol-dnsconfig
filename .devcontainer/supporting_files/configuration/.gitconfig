@@ -9,3 +9,5 @@
         prunetags = true # automatic cleanup of tags
 [pull]
         rebase = true # rely on rebasing when pulling
+[push]
+        autoSetupRemote = true # push branches automatically
