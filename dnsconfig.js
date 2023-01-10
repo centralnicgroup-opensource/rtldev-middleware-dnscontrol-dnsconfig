@@ -12,12 +12,15 @@ DEFAULTS(
     DefaultTTL(3600)
 );
 
-// Domains:
-D('abhoster.com', REG_HX, DnsProvider(DNS_HX),
+// Domains: 
+// DnsProvider(DNS_HX) to add new nameservers
+// DnsProvider(DNS_HX, 0) to override existing nameservers
+// Readmore: https://github.com/StackExchange/dnscontrol/blob/master/docs/nameservers.md
+
+D('papakai123.com', REG_HX, DnsProvider(DNS_HX, 0), // Set the DNS provider but ignore the nameservers it suggests (0 == take none of the names it reports)
     NAMESERVER('ns1.ispapi.net.'),
     NAMESERVER('ns2.ispapi.net.'),
     NAMESERVER('ns3.ispapi.net.'),
-    NAMESERVER('ns4.ispapi.net.'),
     A('elk1', '10.190.234.178'),
     A('test', '56.123.54.12')
 );

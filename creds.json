@@ -3,6 +3,7 @@
 		"apilogin": "test.user",
 		"apipassword": "test.passw0rd",
 		"apientity": "OTE",
+		"debugmode": "0",
 		"TYPE": "HEXONET"
 	}
 }
