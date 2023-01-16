@@ -27,7 +27,7 @@ RUN apk update && \
 
 # Add image configuration and scripts
 ADD ${SCRIPTS_DIR_PATH}/post-create.sh /post-create.sh
-RUN chmod 755 /post-create.sh
+RUN chown vscode:vscode /post-create.sh
 
 # Time Zone
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -35,9 +35,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # configuration for zsh and commitizen
 COPY ${CONFIGURATION_DIR_PATH}/.zshrc ${USERHOME}/.zshrc
 COPY ${CONFIGURATION_DIR_PATH}/.czrc ${USERHOME}/.czrc
-COPY ${CONFIGURATION_DIR_PATH}/.gitconfig ${USERHOME}/.gitconfig
-RUN chown vscode:vscode ${USERHOME}/.zshrc ${USERHOME}/.czrc ${USERHOME}/.gitconfig \
-    && chmod +x ${USERHOME}/.zshrc ${USERHOME}/.czrc ${USERHOME}/.gitconfig
+RUN chown vscode:vscode ${USERHOME}/.zshrc ${USERHOME}/.czrc
 
 WORKDIR /usr/share/rtldev-middleware-dnscontrol-dnsconfig
-ENTRYPOINT exec top -b

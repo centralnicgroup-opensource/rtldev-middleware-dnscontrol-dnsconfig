@@ -20,17 +20,8 @@ jobs:
       docker_options: |
         --name dstack-dnscontrol
         --volume ${{ github.workspace }}:/usr/share/rtldev-middleware-dnscontrol-dnsconfig:cached
-      docker_args: |
-        --env apientity=OTE
-        --env username=test.user
-        --env password=test.passw0rd
-        --env testdomain=papakai123.com
       docker_exec_commands: |
         cd /usr/share/rtldev-middleware-dnscontrol-dnsconfig
-        export HEXONET_ENTITY="$apientity"
-        export HEXONET_UID="$username"
-        export HEXONET_PW="$password"
-        export HEXONET_DOMAIN="$testdomain"
         export GITHUB_CLI=true
         zsh /post-create.sh && zsh ./tests/integration.sh
 
@@ -54,7 +45,6 @@ jobs:
 
       - name: Run Tests & Lint codebase in a docker Container
         run: |
-          DOCKER_ARGUMENTS=${docker_args//$'\n'/' '}
           DOCKER_OPTS=${docker_options//$'\n'/' '}
-          docker run $DOCKER_ARGUMENTS -d $DOCKER_OPTS  ${{ env.image_name }}
-          docker exec dstack-dnscontrol zsh -c "su - vscode -c \"${docker_exec_commands//$'\n'/;}\""
+          docker run -dit $DOCKER_OPTS ${{ env.image_name }}
+          docker exec dstack-dnscontrol zsh -c "su - vscode -c \"${docker_exec_commands//$'\n'/';'}\""
