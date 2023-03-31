@@ -15,7 +15,7 @@ DEFAULTS(
 // Domains: 
 // DnsProvider(DNS_HX) to add new nameservers
 // DnsProvider(DNS_HX, 0) to override existing nameservers
-// Readmore: https://github.com/StackExchange/dnscontrol/blob/master/docs/nameservers.md
+// Readmore: https://docs.dnscontrol.org/advanced-features/nameservers
 
 D('papakai123.com', REG_HX, DnsProvider(DNS_HX, 0), // Set the DNS provider but ignore the nameservers it suggests (0 == take none of the names it reports)
     NAMESERVER('ns1.ispapi.net.'),
