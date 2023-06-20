@@ -15,5 +15,6 @@ if [[ !("$GITHUB_CLI") ]]; then
     cd rtldev-middleware-dnscontrol
     git checkout master && git fetch origin -p --tags && git pull
     go install && sudo ln -sF ~/go/bin/dnscontrol /usr/local/bin/ 
+    go install golang.org/x/tools/cmd/stringer
     cd /usr/share/rtldev-middleware-dnscontrol-dnsconfig
 fi
