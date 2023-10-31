@@ -1,14 +1,11 @@
 name: Linting & Execute Integration Test in the Container
 on:
   workflow_call:
-  pull_request:
-    types:
-      - opened
-      - synchronize
+
 jobs:
   build-docker-image:
     name: Step 1 - Workflow Call
-    secrets: "inherit"
+    secrets: inherit
     uses: ./.github/workflows/build-container.yml
 
   test:
