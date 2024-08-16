@@ -1,10 +1,8 @@
 {
-	"hexonet": {
-		"apilogin": "test.user",
-		"apipassword": "test.passw0rd",
+	"CNR": {
 		"apientity": "OTE",
 		"debugmode": "0",
-		"domain": "papakai123.com",
-		"TYPE": "HEXONET"
+		"domain": "dnscontroltest-cnr.com",
+		"TYPE": "CNR"
 	}
 }

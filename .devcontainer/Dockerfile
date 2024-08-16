@@ -1,40 +1,56 @@
-# [Choice] Alpine version: 3.16, 3.15, 3.14, 3.13 or leave blank for latest
-FROM mcr.microsoft.com/vscode/devcontainers/base:alpine
+# Use the official Microsoft Go development container image
+FROM mcr.microsoft.com/devcontainers/go
 
-# ** [Optional] Uncomment this section to install additional packages. **
-# RUN apk update \
-#     && apk add --no-cache <your-package-list-here>
+# Set environment variables
 ENV TZ=Europe/Berlin
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
-ENV DEBIAN_FRONTEND noninteractive
-ENV CONFIGURATION_DIR_PATH supporting_files/configuration
-ENV SCRIPTS_DIR_PATH supporting_files/scripts
+ENV DEBIAN_FRONTEND=noninteractive
 
-ARG USERNAME=vscode
-ARG USERHOME=/home/${USERNAME}
+# Define paths for configuration and scripts
+ENV CONFIGURATION_DIR_PATH=supporting_files/configuration
+ENV SCRIPTS_DIR_PATH=supporting_files/scripts
+# Set a default value for ZSH_CUSTOM if it's not already set
+ENV ZSH_CUSTOM=/home/vscode/.oh-my-zsh/custom
 
-RUN apk add --no-cache shadow
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    postfix \
+    wget \
+    sudo \
+    git \
+    pwgen \
+    zip \
+    unzip \
+    curl \
+    nodejs \
+    npm \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# fixes vcs_info: function definition file not found For Oh-my-zsh
-RUN apk add zsh-vcs
-
-# REFRESHED_AT YYYY-MM-DD
-ENV REFRESHED_AT 2022-01-10
-
-# # Install dependencies
-RUN apk update && \ 
-    apk add --update postfix wget sudo git pwgen zip unzip curl go nodejs npm
-
-# Add image configuration and scripts
-ADD ${SCRIPTS_DIR_PATH}/post-create.sh /post-create.sh
-RUN chown vscode:vscode /post-create.sh
-
-# Time Zone
+# Set the time zone
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# configuration for zsh and commitizen
-COPY ${CONFIGURATION_DIR_PATH}/.zshrc ${USERHOME}/.zshrc
-COPY ${CONFIGURATION_DIR_PATH}/.czrc ${USERHOME}/.czrc
-RUN chown vscode:vscode ${USERHOME}/.zshrc ${USERHOME}/.czrc
+# Specifics to user vscode
+ARG USERNAME="vscode"
+ARG USERHOME="/home/${USERNAME}"
 
+# Copy scripts and configuration files
+COPY --chown=${USERNAME}:${USERNAME} ${SCRIPTS_DIR_PATH}/*.sh /
+
+# Clone the powerlevel10k theme for zsh and change owner
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k \
+    && chown -R ${USERNAME}:${USERNAME} $ZSH_CUSTOM/themes/powerlevel10k
+
+# Clone the zsh-autosuggestions repository and change owner
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions \
+    && chown -R ${USERNAME}:${USERNAME} $ZSH_CUSTOM/plugins/zsh-autosuggestions
+    
+# copy zsh and committizen configuration file
+COPY --chown=${USERNAME}:${USERNAME} ${CONFIGURATION_DIR_PATH}/.zshrc ${USERHOME}/.zshrc
+COPY --chown=${USERNAME}:${USERNAME} ${CONFIGURATION_DIR_PATH}/.czrc ${USERHOME}/.czrc
+# zsh theme powerline10k
+COPY --chown=${USERNAME}:${USERNAME} ${CONFIGURATION_DIR_PATH}/.p10k.zsh ${USERHOME}/.p10k.zsh
+COPY --chown=${USERNAME}:${USERNAME} ${CONFIGURATION_DIR_PATH}/p10k-instant-prompt-vscode.zsh ${USERHOME}/.cache/p10k-instant-prompt-vscode.zsh
+
+# Set the working directory
 WORKDIR /usr/share/rtldev-middleware-dnscontrol-dnsconfig
