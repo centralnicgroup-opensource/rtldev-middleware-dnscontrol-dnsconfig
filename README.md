@@ -20,12 +20,11 @@ Use ipaddress setting in case of active ip address filter settings.
 
 ```json
 {
-  "hexonet": {
-      "apilogin": "test.user",
-      "apipassword": "test.passw0rd",
+  "CNR": {
+      "apilogin": "yourusername",
+      "apipassword": "yourpassword",
       "apientity": "OTE", // for OT&E system; use "LIVE" for LIVE system
       // "debugmode": "0", // "1" to activate
-      // "ipaddress": "172.3.25.16" // set your outgoing ip
   }
 }
 ```
