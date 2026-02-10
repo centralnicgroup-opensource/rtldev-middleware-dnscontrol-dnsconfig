@@ -27,6 +27,8 @@ jobs:
       docker_exec_commands: |
         cd /usr/share/rtldev-middleware-dnscontrol-dnsconfig
         export GITHUB_CLI=true
+        export CNR_TEST_USER="${{ secrets.CNR_TEST_USER }}"
+        export CNR_TEST_PASSWORD="${{ secrets.CNR_TEST_PASSWORD }}"
         zsh /post-create.sh && zsh ./tests/integration.sh   
     steps:
       - name: Checkout
