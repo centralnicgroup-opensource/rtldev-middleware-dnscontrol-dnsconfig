@@ -4,6 +4,7 @@ on:
     types:
       - opened
       - synchronize
+      - reopened
 jobs:
   tests:
     uses: ./.github/workflows/test.yml
