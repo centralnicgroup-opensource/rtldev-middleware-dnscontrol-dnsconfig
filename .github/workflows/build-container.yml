@@ -16,26 +16,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
+          submodules: recursive
           fetch-depth: 0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
+      # Built through the devcontainer CLI rather than `docker build`, because
+      # the image is only complete once the devcontainer features are applied:
+      # Go, zsh, Node and the rest moved out of the Dockerfile and into the
+      # feature list when this repository adopted the devbase Feature. A plain
+      # `docker build` of .devcontainer/Dockerfile now produces a bare base image.
+      - name: Build and push the devcontainer image
+        uses: devcontainers/ci@v0.3
         with:
-          images: ghcr.io/${{ github.repository }}/rtldev_mid_dnscontrol
-          tags: latest
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .devcontainer
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          imageName: ghcr.io/${{ github.repository }}/rtldev_mid_dnscontrol
+          imageTag: latest
+          cacheFrom: ghcr.io/${{ github.repository }}/rtldev_mid_dnscontrol:latest
+          push: always
