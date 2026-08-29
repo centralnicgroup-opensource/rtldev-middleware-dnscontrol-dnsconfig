@@ -1,36 +1,96 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.224.2/containers/jekyll
 {
-    "name": "dstack-dnscontrol",
-    "dockerComposeFile": [
-        "docker-compose.yml"
-    ],
-    "service": "dnscontrol",
-    "workspaceFolder": "/usr/share/rtldev-middleware-dnscontrol-dnsconfig",
-    "shutdownAction": "stopCompose",
-    // Add the IDs of extensions you want installed when the container is created.
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "GitHub.vscode-pull-request-github",
-                "ms-vscode-remote.remote-containers"
-            ]
-        },
-        "settings": {
-		  "terminal.integrated.defaultProfile.linux": "zsh",
-		  "terminal.integrated.profiles.linux": {
-			"zsh": {
-			  "path": "/bin/zsh"
-			}
-		  }
-        }
+  // Everything shared with the other RTLDEV middleware repositories lives in the
+  // devbase Feature, not here: zsh with the team prompt, commitizen, pnpm, Node
+  // LTS, the GitHub CLI, the Claude Code CLI, the gh credential helper,
+  // persistent shell history, the shared VS Code extension set and the on-attach
+  // toolchain banner.
+  //
+  // What stays in this file is what a Feature cannot set — the name, the
+  // workspace paths, the remote user, initializeCommand and the host mounts —
+  // plus what is genuinely specific to *this* repository: the Go runtime and the
+  // dnscontrol build from the nested submodule.
+  //
+  // The compose frame this replaced ran a single service and needed no backing
+  // services, so it is now the single-container shape — one container built from
+  // ./Dockerfile, as php-sdk and the SDKs use.
+  //
+  // Feature options and troubleshooting:
+  // https://github.com/centralnicgroup-opensource/rtldev-middleware-devcontainer-features
+  "name": "dstack-dnscontrol",
+  "build": {
+    "context": ".",
+    "dockerfile": "Dockerfile"
+  },
+
+  // localWorkspaceFolderBasename is the repository directory name, so these two
+  // cannot drift apart from it or from each other. Resolves to the same
+  // /usr/share/rtldev-middleware-dnscontrol-dnsconfig as the compose volume did.
+  "workspaceMount": "source=${localWorkspaceFolder},target=/usr/share/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+  "workspaceFolder": "/usr/share/${localWorkspaceFolderBasename}",
+  "shutdownAction": "stopContainer",
+
+  // Host-side preflight for the binds at the bottom of this file: Docker creates
+  // a missing bind source itself, as a root-owned *directory*. For ~/.ssh and
+  // ~/.claude that yields a directory nobody in the container can write to; for
+  // ~/.gitconfig it yields a directory where git expects a file, on the host too.
+  // Runs on the host, so it cannot move into a Feature.
+  "initializeCommand": {
+    "claude-state": "mkdir -p ${localEnv:HOME}/.claude",
+    "ssh-dir": "mkdir -p ${localEnv:HOME}/.ssh",
+    "gitconfig": "touch ${localEnv:HOME}/.gitconfig"
+  },
+
+  "features": {
+    // dnscontrol is built from source out of the nested submodule, so this
+    // container needs a Go toolchain of its own.
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "latest"
     },
-    "mounts": [
-        "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/WSL_USER,type=bind,consistency=cached"
-      ],
-    // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-    "remoteUser": "vscode",
-    // Use 'onCreateCommand' to run commands after the container is created (first time).
-    "postCreateCommand": "zsh /post-create.sh"
-    // Run commands after the container is running
+
+    // The shared behaviour layer. It declares Node LTS, the GitHub CLI and the
+    // Claude Code CLI as its own dependencies, so none of the three is listed
+    // here. Do NOT re-declare node:2 to change its version: one Feature id with
+    // two option sets counts as two Features under the spec's equality rule, so
+    // Node would install twice into the same nvm path.
+    //
+    // There is no package.json or composer.json here, so the generic dependency
+    // install has nothing to do -- post-create.sh below is this repository's
+    // whole dependency story.
+    "ghcr.io/centralnicgroup-opensource/rtldev-middleware-devcontainer-features/devbase:1": {
+      "installProjectDependencies": false
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      // Go tooling only. devbase contributes the shared layer — GitHub Actions,
+      // GitHub PRs, Remote Containers, Containers, both Claude extensions,
+      // shellcheck / shell-format / vscode-yaml — plus the zsh terminal profile
+      // and the shellcheck/npm settings that go with them.
+      "extensions": ["golang.go"]
+    }
+  },
+
+  "remoteUser": "vscode",
+
+  // .ssh and .gitconfig make git work as it does on the host; /WSL_USER is what
+  // devbase's history persistence reads; .claude carries the Claude Code session
+  // state. The compose frame this replaced declared none of them — which is why
+  // the old post-create.sh symlinked ~/.gitconfig and ~/.zsh_history to a
+  // /WSL_USER that was never mounted.
+  //
+  // ${localEnv:HOME}${localEnv:USERPROFILE} resolves to whichever of the two the
+  // host defines. On a host defining *both* it resolves to neither and Docker
+  // mounts an empty directory; devbase reports that on post-create rather than
+  // silently losing history.
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
+    "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE},target=/WSL_USER,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached"
+  ],
+
+  // Builds dnscontrol from the nested submodule. Runs after devbase's
+  // post-create, so the toolchain is already in place.
+  "postCreateCommand": "zsh .devcontainer/post-create.sh"
 }
