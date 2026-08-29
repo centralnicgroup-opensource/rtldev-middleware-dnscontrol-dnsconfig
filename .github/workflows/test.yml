@@ -1,4 +1,5 @@
 name: Linting & Execute Integration Test in the Container
+
 on:
   workflow_call:
 
@@ -19,17 +20,6 @@ jobs:
     permissions:
       contents: read
       packages: read
-    env:
-      image_name: ghcr.io/${{ github.repository }}/rtldev_mid_dnscontrol:latest
-      docker_options: |
-        --name dstack-dnscontrol
-        --volume ${{ github.workspace }}:/usr/share/rtldev-middleware-dnscontrol-dnsconfig:cached
-      docker_exec_commands: |
-        cd /usr/share/rtldev-middleware-dnscontrol-dnsconfig
-        export GITHUB_CLI=true
-        export CNR_TEST_USER="${{ secrets.CNR_TEST_USER }}"
-        export CNR_TEST_PASSWORD="${{ secrets.CNR_TEST_PASSWORD }}"
-        zsh /post-create.sh && zsh ./tests/integration.sh   
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -42,8 +32,22 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run Tests & Lint codebase in a docker Container
-        run: |
-          DOCKER_OPTS=${docker_options//$'\n'/' '}
-          docker run -dit $DOCKER_OPTS ${{ env.image_name }}
-          docker exec dstack-dnscontrol zsh -c "su - vscode -c \"${docker_exec_commands//$'\n'/';'}\""
+      # The tests run inside the devcontainer itself, built by the devcontainer
+      # CLI so that the features are applied -- Go, zsh and Node live in the
+      # feature list now, not in the Dockerfile, so `docker run` on a plain image
+      # build would have none of them. The image published by step 1 is the build
+      # cache, so this rebuild is a cache hit rather than a second full build.
+      - name: Run integration tests in the devcontainer
+        uses: devcontainers/ci@v0.3
+        env:
+          CNR_TEST_USER: ${{ secrets.CNR_TEST_USER }}
+          CNR_TEST_PASSWORD: ${{ secrets.CNR_TEST_PASSWORD }}
+        with:
+          imageName: ghcr.io/${{ github.repository }}/rtldev_mid_dnscontrol
+          imageTag: latest
+          cacheFrom: ghcr.io/${{ github.repository }}/rtldev_mid_dnscontrol:latest
+          push: never
+          env: |
+            CNR_TEST_USER
+            CNR_TEST_PASSWORD
+          runCmd: zsh ./tests/integration.sh
