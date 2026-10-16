@@ -40,8 +40,8 @@ jobs:
       - name: Run integration tests in the devcontainer
         uses: devcontainers/ci@v0.3
         env:
-          CNR_TEST_USER: ${{ secrets.CNR_TEST_USER }}
-          CNR_TEST_PASSWORD: ${{ secrets.CNR_TEST_PASSWORD }}
+          CNR_TEST_USER: ${{ secrets.RTLDEV_MW_CI_USER_CNR }}
+          CNR_TEST_PASSWORD: ${{ secrets.RTLDEV_MW_CI_USERPASSWORD_CNR }}
         with:
           imageName: ghcr.io/${{ github.repository }}/rtldev_mid_dnscontrol
           imageTag: latest
