@@ -48,6 +48,10 @@ bash tests/finalize_dev.sh        # go vet, go fmt, go generate, go mod tidy in 
   devcontainer image as `ghcr.io/<repository>/rtldev_mid_dnscontrol` via `build-container.yml`
   and runs `tests/integration.sh` inside it; it runs on pull requests through
   `auto-merge-dependabot-pr.yml`.
+- **Integration runs are serialised.** Every run edits the same live OT&E zone, so the
+  `test` job sits in one `concurrency` group per repository; parallel runs corrupt each
+  other's results. GitHub keeps only one pending job per group, so a burst of PRs leaves
+  some checks cancelled — re-run those one at a time.
 - **Dependabot PRs auto-merge** through the shared `auto-merge-dependabot-pr.yml` in
   [rtldev-middleware-shareable-workflows](https://github.com/centralnicgroup-opensource/rtldev-middleware-shareable-workflows)
   once the tests pass — do not inline a copy of it.

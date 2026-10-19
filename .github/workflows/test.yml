@@ -16,6 +16,16 @@ jobs:
     name: Step 2 - Linting & Testing
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
     needs: build-docker-image
+    # Every run edits the same live OT&E zone (creds.json's domain), so two at once
+    # corrupt each other's expected state -- "Expected 0 corrections on second run",
+    # unexpected GENERATE_ZONE, deletes of records the other run already removed.
+    # One group per repository serialises them. GitHub keeps only one pending job per
+    # group and cancels an older pending one when a third arrives, so a burst of
+    # Dependabot PRs leaves some checks cancelled: re-run those, never in parallel.
+    # Never cancel-in-progress: a run cut off mid-test leaves the zone dirty. (RSRMID-3125)
+    concurrency:
+      group: ${{ github.repository }}-cnr-ote-zone
+      cancel-in-progress: false
     timeout-minutes: 12
     permissions:
       contents: read
