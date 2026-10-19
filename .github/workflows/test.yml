@@ -26,7 +26,10 @@ jobs:
     concurrency:
       group: ${{ github.repository }}-cnr-ote-zone
       cancel-in-progress: false
-    timeout-minutes: 12
+    # A full passing run took 9m40s on 2026-10-19 and two later ones exceeded 12m, so
+    # 12 left no headroom against a slow OT&E. Time spent waiting for the concurrency
+    # group does not count: the job has not started. (RSRMID-3125)
+    timeout-minutes: 25
     permissions:
       contents: read
       packages: read
